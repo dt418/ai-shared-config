@@ -1,0 +1,216 @@
+---
+description: Use when user asks to update changelog, update docs, review changes, or create release notes. Also use after completing a significant feature, fix, or refactor that should be documented.
+globs:
+alwaysApply: true
+---
+
+---
+name: changelog-docs-updater
+description: Use when user asks to update changelog, update docs, review changes, or create release notes. Also use after completing a significant feature, fix, or refactor that should be documented. Trigger on phrases like "update changelog", "update docs", "review changes", "document changes", "what changed", "release notes", or when working tree has uncommitted changes before a PR or release.
+---
+
+# Changelog & Docs Updater
+
+Review git changes and update CHANGELOG.md and project documentation to reflect the latest work.
+
+## Workflow
+
+### Step 1: Gather Changes
+
+Run these commands to understand the current state:
+
+```bash
+git log --oneline -20                          # Recent commits
+git log --oneline --since="1 week ago"         # Time-based range
+git status                                     # Uncommitted changes
+git diff --stat                                # Files changed
+```
+
+If the user specifies a range (e.g., "since last tag", "last 5 commits"), use that instead:
+
+```bash
+# Since last tag
+git log --oneline $(git describe --tags --abbrev=0 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD
+
+# Specific range
+git log --oneline HEAD~5..HEAD
+```
+
+### Step 2: Categorize by Conventional Commit Type
+
+Parse each commit message for its prefix and group accordingly:
+
+| Prefix | CHANGELOG Section | Example |
+|--------|-------------------|---------|
+| `feat:` | Features | `feat: add dark mode toggle` |
+| `fix:` | Bug Fixes | `fix: resolve pagination off-by-one` |
+| `refactor:` | Refactors | `refactor: extract useFilters hook` |
+| `perf:` | Performance | `perf: memoize movie list rendering` |
+| `test:` | Tests | `test: add E2E tests for search` |
+| `docs:` | Documentation | `docs: update architecture diagram` |
+| `chore:` | Chores | `chore: update dependencies` |
+| `ci:` | CI/CD | `ci: add Playwright to GitHub Actions` |
+| `style:` | Style | `style: format with prettier` |
+
+**Commits without a prefix**: Classify by reading the diff. If it touches only config/tooling, treat as `chore`. If it changes behavior, determine if `fix` or `feat` fits.
+
+**Skip trivial commits**: Merge commits, version bumps, "WIP", and typo fixes (unless the user explicitly asks for everything).
+
+### Step 3: Update CHANGELOG.md
+
+#### If CHANGELOG.md exists
+
+1. Read the file
+2. Find the `## [Unreleased]` section
+3. Add new entries under the appropriate `###` subheading (create if missing)
+4. Preserve existing entries — never overwrite or reorder them
+5. Each entry format: `- prefix: description (short-hash)`
+
+```markdown
+## [Unreleased]
+
+### Features
+
+- feat: add dark mode toggle (a1b2c3d)
+
+### Bug Fixes
+
+- fix: resolve pagination off-by-one error (d4e5f6g)
+```
+
+#### If CHANGELOG.md does not exist
+
+Create it with this header, then add entries:
+
+```markdown
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+
+## [Unreleased]
+
+### Features
+
+- feat: description (hash)
+```
+
+#### Releasing a version
+
+When the user says "release X.Y.Z" or "cut a release":
+1. Move all `## [Unreleased]` content to `## [X.Y.Z] - YYYY-MM-DD`
+2. Leave `## [Unreleased]` empty with no subsections
+
+#### Validate formatting
+
+After updating CHANGELOG.md, always run:
+
+```bash
+npx markdownlint CHANGELOG.md
+```
+
+Fix any errors before proceeding. See [Markdownlint Formatting](#markdownlint-formatting) section for common rules.
+
+### Step 4: Determine if Docs Need Updates
+
+Scan the changed files to decide which docs to update:
+
+| Changed files | Doc to check | What to update |
+|---------------|-------------|----------------|
+| `src/components/**`, `src/hooks/**`, `src/views/**` | `docs/ARCHITECTURE.md` | Component hierarchy, Mermaid diagrams |
+| `src/store/**`, state management | `docs/ARCHITECTURE.md` | State management diagram |
+| `src/services/**`, API calls | `docs/ARCHITECTURE.md` | Data flow diagram, API endpoints |
+| `package.json` (scripts) | `docs/DEVELOPMENT.md` | Running Checks section |
+| `lefthook.yml`, `.prettierrc`, `eslint.config.js` | `docs/DEVELOPMENT.md` | Pre-commit Hooks section |
+| `vite.config.ts`, `tsconfig.json` | `docs/DEVELOPMENT.md` | Build configuration |
+| User-facing features | `README.md` | Features section, setup instructions |
+
+**If no relevant docs exist**: Skip this step. Don't create docs that don't already exist unless the user asks.
+
+### Step 5: Write Doc Updates
+
+For each doc that needs updating:
+
+1. Read the current file to understand its structure
+2. Locate the exact section to modify
+3. Make targeted edits — don't rewrite sections
+4. Preserve existing formatting conventions (heading levels, list style)
+5. If you modified a Mermaid diagram, validate it:
+   ```bash
+   npx @probelabs/maid <file>
+   ```
+
+### Step 6: Report Summary
+
+After making changes, report what was done:
+
+```
+## Changes Reviewed
+
+**Commits analyzed:** N (from abc1234 to def5678)
+**Date range:** YYYY-MM-DD to YYYY-MM-DD
+
+### Summary by Category
+| Category | Count | Key Changes |
+|----------|-------|-------------|
+| Features | N | feat: ..., feat: ... |
+| Bug Fixes | N | fix: ... |
+
+### Files Updated
+- `CHANGELOG.md` — Added N entries under [Unreleased]
+- `docs/ARCHITECTURE.md` — Updated component hierarchy
+```
+
+## Quick Commands
+
+```bash
+# See what changed recently
+git log --oneline -10
+
+# See files touched
+git diff --stat HEAD~5..HEAD
+
+# Check if CHANGELOG exists
+cat CHANGELOG.md 2>/dev/null | head -5 || echo "No CHANGELOG"
+```
+
+## Edge Cases
+
+- **No conventional commits**: Read the diffs and write meaningful entries yourself. Use `chore:` for config-only changes.
+- **CHANGELOG has no [Unreleased]**: Add the section at the top (after the header) before adding entries.
+- **Merge commits**: Skip them unless they contain a squashed summary worth documenting.
+- **Already documented**: Compare commit hashes to avoid duplicates.
+
+## Markdownlint Formatting
+
+CHANGELOG.md must pass `npx markdownlint CHANGELOG.md`. Key rules:
+
+**MD022 — Blank line after headings**: Always add a blank line between a `### Heading` and the first list item.
+
+```markdown
+<!-- WRONG -->
+### Features
+- feat: something
+
+<!-- CORRECT -->
+### Features
+
+- feat: something
+```
+
+**MD032 — Blank line before lists**: Same rule — the blank line after the heading satisfies this.
+
+**MD024 — Duplicate headings**: CHANGELOG files inherently repeat section names (Features, Bug Fixes) under different dates. Disable this rule in `.markdownlint.json`:
+
+```json
+{
+  "no-duplicate-heading": false
+}
+```
+
+**Validate after every change:**
+
+```bash
+npx markdownlint CHANGELOG.md
+```

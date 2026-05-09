@@ -1,0 +1,23 @@
+# Logs
+*.log
+logs/
+
+# Backups (can be restored from remote)
+backup/
+
+# Node modules
+node_modules/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
