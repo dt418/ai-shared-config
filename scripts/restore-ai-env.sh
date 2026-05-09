@@ -12,6 +12,7 @@ VERSION="1.0.0"
 LOG_FILE="${HOME}/.config/ai-shared/restore-ai-env.log"
 TIMESTAMP=$(date +"%Y%m%d-%H%M%S")
 BACKUP_ROOT="${HOME}/.config/ai-shared/backup/${TIMESTAMP}"
+BACKUP_ROOT_PARENT="${HOME}/.config/ai-shared/backup"
 SHARED_ROOT="${HOME}/.config/ai-shared"
 
 # Tool config locations
@@ -120,6 +121,91 @@ merge_config_dir() {
     warn "No non-empty source found for $shared_dir"
 }
 
+# List available backups (newest to oldest)
+list_backups() {
+    if [[ ! -d "$BACKUP_ROOT_PARENT" ]]; then
+        warn "No backups found at $BACKUP_ROOT_PARENT"
+        return 1
+    fi
+    
+    local backups=()
+    while IFS= read -r backup_dir; do
+        backups+=("$backup_dir")
+    done < <(ls -1d "$BACKUP_ROOT_PARENT"/*/ 2>/dev/null | sort -r)
+    
+    if [[ ${#backups[@]} -eq 0 ]]; then
+        warn "No backups found"
+        return 1
+    fi
+    
+    echo "${backups[@]}"
+}
+
+# Clean old backups, keep only latest 5
+cleanup_old_backups() {
+    local max_backups=5
+    local backups=()
+    
+    while IFS= read -r backup_dir; do
+        backups+=("$backup_dir")
+    done < <(ls -1d "$BACKUP_ROOT_PARENT"/*/ 2>/dev/null | sort -r)
+    
+    local backup_count=${#backups[@]}
+    
+    if [[ $backup_count -le $max_backups ]]; then
+        info "Current backups: $backup_count (keeping all)"
+        return 0
+    fi
+    
+    info "Found $backup_count backups, removing oldest $((backup_count - max_backups))..."
+    
+    for ((i=max_backups; i<backup_count; i++)); do
+        local old_backup="${backups[$i]}"
+        info "Removing old backup: $(basename "$old_backup")"
+        rm -rf "$old_backup"
+    done
+    
+    success "Kept latest $max_backups backups"
+}
+
+# Select backup interactively
+select_backup() {
+    local backups=()
+    while IFS= read -r backup_dir; do
+        backups+=("$(basename "$backup_dir")")
+    done < <(ls -1d "$BACKUP_ROOT_PARENT"/*/ 2>/dev/null | sort -r)
+    
+    if [[ ${#backups[@]} -eq 0 ]]; then
+        error "No backups available"
+        return 1
+    fi
+    
+    echo
+    echo "Available backups (newest to oldest):"
+    for i in "${!backups[@]}"; do
+        local backup_name="${backups[$i]}"
+        local backup_path="$BACKUP_ROOT_PARENT/$backup_name"
+        local backup_size=$(du -sh "$backup_path" 2>/dev/null | cut -f1)
+        if [[ $i -eq 0 ]]; then
+            echo "  [$i] $backup_name (${backup_size}) [LATEST - DEFAULT]"
+        else
+            echo "  [$i] $backup_name (${backup_size})"
+        fi
+    done
+    echo
+    
+    read -p "Select backup to use (default: 0): " selected
+    selected=${selected:-0}
+    
+    if ! [[ "$selected" =~ ^[0-9]+$ ]] || [[ $selected -ge ${#backups[@]} ]]; then
+        error "Invalid selection"
+        return 1
+    fi
+    
+    SELECTED_BACKUP="$BACKUP_ROOT_PARENT/${backups[$selected]}"
+    info "Selected backup: ${backups[$selected]}"
+}
+
 # Detect package managers and runtimes
 detect_env() {
     info "Detecting environment..."
@@ -169,9 +255,21 @@ main() {
     # Detect environment
     detect_env
     
-    # Create backup root
-    mkdir -p "$BACKUP_ROOT"
-    info "Backup directory: $BACKUP_ROOT"
+    # List available backups and let user select
+    if ! list_backups; then
+        info "No existing backups found"
+    else
+        select_backup
+    fi
+    
+    # If no backup selected (first run), use current timestamp
+    if [[ -z "${SELECTED_BACKUP:-}" ]]; then
+        SELECTED_BACKUP="$BACKUP_ROOT"
+        mkdir -p "$SELECTED_BACKUP"
+        info "Backup directory: $SELECTED_BACKUP"
+    else
+        info "Using backup: $SELECTED_BACKUP"
+    fi
     
     # Create shared directory structure
     info "Creating shared directory structure..."
@@ -186,7 +284,7 @@ main() {
         
         # Backup existing config if present
         if [[ -d "$tool_path" ]]; then
-            backup_if_needed "$tool_path" "$BACKUP_ROOT/$tool_name"
+            backup_if_needed "$tool_path" "$SELECTED_BACKUP/$tool_name"
         fi
         
         # Setup symlinks for each shared subdir
@@ -215,6 +313,9 @@ main() {
         merge_config_dir "$shared_dir" "${source_dirs[@]}"
     done
     
+    # Clean old backups, keeping only latest 5
+    cleanup_old_backups
+    
     # Final verification
     info "Verifying setup..."
     all_good=true
@@ -241,13 +342,13 @@ main() {
     fi
     
     info "Environment restoration complete!"
-    info "Backups stored in: $BACKUP_ROOT"
+    info "Backup location: $SELECTED_BACKUP"
     info "Shared config root: $SHARED_ROOT"
     echo
     echo "Next steps:"
     echo "1. Reinstall MCP servers as needed (e.g., npm install -g @modelcontextprotocol/server-filesystem)"
     echo "2. Verify each AI tool loads configs correctly"
-    echo "3. To restore from backup: cp -rf $BACKUP_ROOT/* ~/.config/ (adjust paths as needed)"
+    echo "3. To restore from backup: cp -rf $SELECTED_BACKUP/* ~/.config/ (adjust paths as needed)"
 }
 
 # Run main if script is executed directly
