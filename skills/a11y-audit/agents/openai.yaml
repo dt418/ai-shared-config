@@ -1,0 +1,4 @@
+interface:
+  display_name: "A11y Audit"
+  short_description: "Audit web accessibility with Lighthouse, axe, and WCAG checks."
+  default_prompt: "Audit this web project or URL for accessibility issues and produce prioritized fixes."

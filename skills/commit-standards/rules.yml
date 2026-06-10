@@ -1,0 +1,71 @@
+# Commit Standards Rules
+
+## TypeScript
+
+- Type: string
+- Description: Allowed commit types
+
+**Rules:**
+```
+feat, fix, refactor, perf, docs, test, build, ci, chore, revert
+```
+
+## Summary Pattern
+
+- Type: string (regex)
+- Description: Invalid summary patterns to reject
+
+**Rules:**
+```
+^(update|fix stuff|misc|changes|wip|added|modified|fixed)$
+```
+
+## Summary Length
+
+- Type: number
+- Description: Maximum summary length (chars)
+
+**Value:** 72
+
+## Summary Mood
+
+- Type: string
+- Description: Required mood for summary
+
+**Value:** imperative
+
+## Body Required
+
+- Type: boolean
+- Description: Require body for non-trivial commits
+
+**Value:** true
+
+## Protected Files
+
+- Type: array
+- Description: Configuration files not to modify
+
+**Rules:**
+```
+.prettierrc*
+eslint.config.*
+.eslintrc*
+tsconfig.json
+lefthook.yml
+commitlint.config.*
+package.json
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
+```
+
+## Exception Types
+
+- Type: array
+- Description: Commit types exempt from body requirement
+
+**Rules:**
+```
+merge, revert, fixup!, squash!
+```
