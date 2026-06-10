@@ -1,0 +1,265 @@
+examples:
+  - id: tech-research
+    title:
+      zh: 技术选型调研
+      en: Technology Selection Research
+    description:
+      zh: 深入研究新技术或框架，提供选型建议
+      en: In-depth research on new technologies or frameworks with selection recommendations
+    prompt:
+      zh: |-
+        我们团队需要为新项目选择前端框架。
+
+        项目背景：
+        - 企业级后台管理系统
+        - 预计3年以上维护周期
+        - 团队成员5人，大部分熟悉Vue
+        - 需要支持复杂表单和数据可视化
+
+        候选框架：
+        - Vue 3 + Element Plus
+        - React + Ant Design
+        - Angular + Material
+
+        请帮我：
+        1. 深入研究各框架的优劣势
+        2. 分析各框架在企业级应用中的表现
+        3. 收集社区和企业的真实使用反馈
+        4. 对比学习曲线和团队迁移成本
+        5. 提供基于证据的选型建议
+        6. 列出关键参考资料和数据来源
+      en: |-
+        Our team needs to select a frontend framework for a new project.
+
+        Project background:
+        - Enterprise-level admin management system
+        - Expected maintenance period of 3+ years
+        - Team of 5 members, most familiar with Vue
+        - Need to support complex forms and data visualization
+
+        Candidate frameworks:
+        - Vue 3 + Element Plus
+        - React + Ant Design
+        - Angular + Material
+
+        Please help me:
+        1. In-depth research on pros and cons of each framework
+        2. Analyze performance of each framework in enterprise applications
+        3. Collect real usage feedback from community and enterprises
+        4. Compare learning curves and team migration costs
+        5. Provide evidence-based selection recommendations
+        6. List key references and data sources
+  - id: industry-trend
+    title:
+      zh: 行业趋势分析
+      en: Industry Trend Analysis
+    description:
+      zh: 分析特定行业的发展趋势和市场机会
+      en: Analyze development trends and market opportunities in specific industries
+    prompt:
+      zh: |-
+        我需要研究2024-2025年人工智能在医疗健康领域的应用趋势。
+
+        研究目的：
+        - 为公司战略规划提供依据
+        - 识别潜在的市场机会
+        - 了解主要玩家和竞争格局
+
+        关注重点：
+        1. AI辅助诊断的最新进展
+        2. 医疗影像分析的应用案例
+        3. 药物研发中的AI应用
+        4. 监管政策和合规要求
+        5. 市场规模和增长预测
+
+        请提供：
+        1. 结构化的研究报告
+        2. 关键发现和洞察
+        3. 各领域的成熟度分析
+        4. 主要参与者和案例研究
+        5. 未来3-5年的发展预测
+        6. 详细的来源引用和可信度评估
+      en: |-
+        I need to research AI application trends in healthcare for 2024-2025.
+
+        Research purpose:
+        - Provide basis for company strategic planning
+        - Identify potential market opportunities
+        - Understand major players and competitive landscape
+
+        Focus areas:
+        1. Latest advances in AI-assisted diagnosis
+        2. Application cases in medical imaging analysis
+        3. AI applications in drug development
+        4. Regulatory policies and compliance requirements
+        5. Market size and growth forecasts
+
+        Please provide:
+        1. Structured research report
+        2. Key findings and insights
+        3. Maturity analysis of each area
+        4. Major players and case studies
+        5. Development predictions for next 3-5 years
+        6. Detailed source citations and credibility assessment
+  - id: competitive-analysis
+    title:
+      zh: 竞品深度分析
+      en: Competitive Deep Analysis
+    description:
+      zh: 对竞争对手产品进行全面深入的研究分析
+      en: Comprehensive and in-depth research analysis of competitor products
+    prompt:
+      zh: |-
+        我们的产品是一款在线协作白板工具，需要深入研究主要竞品。
+
+        竞品列表：
+        - Miro
+        - FigJam
+        - Whimsical
+        - Excalidraw
+
+        研究维度：
+        1. 产品功能对比（核心功能、差异化功能）
+        2. 定价策略和商业模式
+        3. 目标用户群体和使用场景
+        4. 技术架构和性能表现
+        5. 用户评价和满意度
+        6. 市场定位和品牌策略
+
+        请帮我：
+        1. 收集各产品的公开信息和用户反馈
+        2. 创建详细的功能对比矩阵
+        3. 分析各产品的优势和不足
+        4. 识别市场空白和差异化机会
+        5. 提供我们产品的定位建议
+        6. 附上所有引用来源和数据出处
+      en: |-
+        Our product is an online collaborative whiteboard tool, we need in-depth research on main competitors.
+
+        Competitor list:
+        - Miro
+        - FigJam
+        - Whimsical
+        - Excalidraw
+
+        Research dimensions:
+        1. Product feature comparison (core features, differentiating features)
+        2. Pricing strategy and business model
+        3. Target user groups and use cases
+        4. Technical architecture and performance
+        5. User reviews and satisfaction
+        6. Market positioning and brand strategy
+
+        Please help me:
+        1. Collect public information and user feedback for each product
+        2. Create detailed feature comparison matrix
+        3. Analyze advantages and disadvantages of each product
+        4. Identify market gaps and differentiation opportunities
+        5. Provide positioning recommendations for our product
+        6. Include all citation sources and data origins
+  - id: literature-review
+    title:
+      zh: 学术文献综述
+      en: Academic Literature Review
+    description:
+      zh: 综合学术资料，撰写文献综述报告
+      en: Synthesize academic materials and write literature review reports
+    prompt:
+      zh: |-
+        我正在准备一篇关于"大语言模型在代码生成中的应用"的学术论文，需要进行文献综述。
+
+        研究范围：
+        - 时间跨度：2020-2024年
+        - 核心关键词：LLM, Code Generation, Program Synthesis
+        - 涵盖顶会：ICML, NeurIPS, ACL, EMNLP, ICSE
+
+        综述要求：
+        1. 梳理该领域的发展脉络
+        2. 总结主流技术方法和模型
+        3. 分析代表性工作的贡献和局限
+        4. 识别当前研究的共识和争议
+        5. 指出未解决的问题和未来方向
+
+        请提供：
+        1. 结构化的文献综述框架
+        2. 按主题分类的文献分析
+        3. 关键论文的详细解读
+        4. 研究趋势的可视化建议
+        5. 研究空白和潜在贡献点
+        6. 规范的学术引用格式
+      en: |-
+        I'm preparing an academic paper on "Applications of Large Language Models in Code Generation" and need a literature review.
+
+        Research scope:
+        - Time span: 2020-2024
+        - Core keywords: LLM, Code Generation, Program Synthesis
+        - Top venues: ICML, NeurIPS, ACL, EMNLP, ICSE
+
+        Review requirements:
+        1. Trace the development trajectory of this field
+        2. Summarize mainstream technical methods and models
+        3. Analyze contributions and limitations of representative works
+        4. Identify consensus and debates in current research
+        5. Point out unresolved problems and future directions
+
+        Please provide:
+        1. Structured literature review framework
+        2. Literature analysis categorized by topic
+        3. Detailed interpretation of key papers
+        4. Visualization suggestions for research trends
+        5. Research gaps and potential contribution points
+        6. Standardized academic citation format
+  - id: policy-research
+    title:
+      zh: 政策法规研究
+      en: Policy and Regulation Research
+    description:
+      zh: 研究特定领域的政策法规和合规要求
+      en: Research policies, regulations, and compliance requirements in specific areas
+    prompt:
+      zh: |-
+        我们公司计划出海开展跨境电商业务，需要研究欧盟的数据合规要求。
+
+        研究重点：
+        - GDPR对电商平台的要求
+        - 用户数据跨境传输规定
+        - Cookie和追踪技术的合规使用
+        - 数据泄露通知义务
+        - 儿童隐私保护要求
+
+        业务场景：
+        - B2C电商平台
+        - 用户注册和订单数据处理
+        - 营销邮件和用户行为分析
+        - 支付信息处理
+
+        请帮我：
+        1. 梳理相关法规的核心要求
+        2. 分析各要求对我们业务的影响
+        3. 收集执法案例和处罚情况
+        4. 提供合规建议和最佳实践
+        5. 列出需要关注的时间节点
+        6. 提供官方文件和权威解读来源
+      en: |-
+        Our company plans to expand into cross-border e-commerce and needs to research EU data compliance requirements.
+
+        Research focus:
+        - GDPR requirements for e-commerce platforms
+        - Cross-border data transfer regulations
+        - Compliant use of cookies and tracking technologies
+        - Data breach notification obligations
+        - Children's privacy protection requirements
+
+        Business scenarios:
+        - B2C e-commerce platform
+        - User registration and order data processing
+        - Marketing emails and user behavior analysis
+        - Payment information processing
+
+        Please help me:
+        1. Summarize core requirements of relevant regulations
+        2. Analyze impact of each requirement on our business
+        3. Collect enforcement cases and penalty situations
+        4. Provide compliance recommendations and best practices
+        5. List important timeline milestones to watch
+        6. Provide official documents and authoritative interpretation sources
